@@ -1,0 +1,101 @@
+createOrReplace
+
+	table 'Tabela 1 (Plan1)'
+		lineageTag: 42e159ef-7821-4938-b816-23cdded361da
+
+		column Munícipio:
+			dataType: string
+			lineageTag: ef5808c7-c8e5-44f6-bb54-ed5aa716ed15
+			summarizeBy: none
+			sourceColumn: Munícipio:
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"Tabela 1 (Plan1)","TableItemName":"Munícipio: (grupos)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+		column 'População (CENS0 2022):'
+			dataType: int64
+			formatString: 0
+			lineageTag: e613989a-c9d3-4b7c-afba-6ae285e5104a
+			summarizeBy: sum
+			sourceColumn: População (CENS0 2022):
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Conselho Municipal PcD (Órgão):'
+			dataType: string
+			lineageTag: c9df804c-1fc7-4f99-97a9-b3c91f94a609
+			summarizeBy: none
+			sourceColumn: Conselho Municipal PcD (Órgão):
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Secretária Municipal Responsável: '
+			dataType: string
+			lineageTag: a875cc69-9219-4a4d-beb8-527f229be6aa
+			summarizeBy: none
+			sourceColumn: "Secretária Municipal Responsável: "
+
+			annotation SummarizationSetBy = Automatic
+
+		column E-Mail:
+			dataType: string
+			lineageTag: d406a404-a51d-4b97-90f0-3a08a1e13bb0
+			summarizeBy: none
+			sourceColumn: E-Mail:
+
+			annotation SummarizationSetBy = Automatic
+
+		column Telefone/WhatsApp:
+			dataType: string
+			lineageTag: 2aa0ad69-03ca-49aa-9d3e-a267748781a9
+			summarizeBy: none
+			sourceColumn: Telefone/WhatsApp:
+
+			annotation SummarizationSetBy = Automatic
+
+		column Endereço:
+			dataType: string
+			isHidden
+			lineageTag: 777fd931-91f6-4668-a965-b5ce11f0bc52
+			summarizeBy: none
+			sourceColumn: Endereço:
+
+			changedProperty = IsHidden
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Munícipio: (grupos)' =
+				SWITCH(
+					TRUE,
+					ISBLANK('Tabela 1 (Plan1)'[Munícipio:]),
+					"(Em branco)",
+					'Tabela 1 (Plan1)'[Munícipio:] IN {"Aperibé"},
+					"Aperibé",
+					"Outro"
+				)
+			lineageTag: 294ec228-91b2-4cef-88f8-be3d7edf4efb
+			summarizeBy: none
+
+			extendedProperty GroupingMetadata = {"version":0,"groupedColumns":[{"Column":{"Expression":{"SourceRef":{"Entity":"Tabela 1 (Plan1)"}},"Property":"Munícipio:"}}]}
+
+			annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"t","Entity":"Tabela 1 (Plan1)"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"t"}},"Property":"Munícipio:"}}],"GroupItems":[{"DisplayName":"(Em branco)","BlankDefaultPlaceholder":true},{"DisplayName":"Aperibé","Expression":{"In":{"Expressions":[{"Column":{"Expression":{"SourceRef":{"Source":"t"}},"Property":"Munícipio:"}}],"Values":[[{"Literal":{"Value":"'Aperibé'"}}]]}}},{"DisplayName":"Outro"}]}
+
+			annotation SummarizationSetBy = Automatic
+
+		partition 'Tabela 1 (Plan1)' = m
+			mode: import
+			source =
+					let
+					    Fonte = Excel.Workbook(File.Contents("C:\Users\user\Documents\Lista dos 92 municípios do estado do Rio em Ordem Alfabética - POPULAÇÃO, CONSELHOS E SECERTARIAS MUNICIPAIS.xlsx"), null, false),
+					    Plan1_sheet = Fonte{[Item="Plan1",Kind="Sheet"]}[Data],
+					    FilterNullAndWhitespace = each List.Select(_, each _ <> null and (not (_ is text) or Text.Trim(_) <> "")),
+					    #"Linhas Inferiores Removidas" = Table.RemoveLastN(Plan1_sheet, each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+					    #"Linhas Superiores Removidas" = Table.Skip(#"Linhas Inferiores Removidas", each try List.IsEmpty(List.Skip(FilterNullAndWhitespace(Record.FieldValues(_)), 1)) otherwise false),
+					    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Superiores Removidas", [PromoteAllScalars=true]),
+					    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"Munícipio:", type text}, {"População (CENS0 2022):", Int64.Type}, {"Conselho Municipal PcD (Órgão):", type text}, {"Secretária Municipal Responsável: ", type text}, {"E-Mail:", type text}, {"Telefone/WhatsApp:", type text}, {"Endereço:", type text}})
+					in
+					    #"Tipo Alterado"
+
+		annotation PBI_ResultType = Table
+
