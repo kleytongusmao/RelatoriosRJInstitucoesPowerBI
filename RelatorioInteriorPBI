@@ -1,0 +1,83 @@
+
+
+	table Interior
+		lineageTag: 0bde4efe-160f-4c8b-b47e-e23c7db35aeb
+
+		column Column1
+			dataType: string
+			lineacreateOrReplacegeTag: da13da1f-37f4-48d6-815d-0d769ea39527
+			summarizeBy: none
+			sourceColumn: Column1
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column2
+			dataType: string
+			lineageTag: cdbc467c-5329-40d4-93d2-22822cfbfa88
+			summarizeBy: none
+			sourceColumn: Column2
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column3
+			dataType: string
+			lineageTag: d198076c-31ee-4d6c-87e4-11c368702190
+			summarizeBy: none
+			sourceColumn: Column3
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column4
+			dataType: string
+			lineageTag: 491d2695-33f3-406e-888b-c2164c933b92
+			summarizeBy: none
+			sourceColumn: Column4
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column5
+			dataType: string
+			lineageTag: e5c870e1-e5f1-43b5-a2c5-a4d1bc4e97d0
+			summarizeBy: none
+			sourceColumn: Column5
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column6
+			dataType: string
+			lineageTag: 1d20ca6e-3422-4b72-a697-f54c3d9f04d2
+			summarizeBy: none
+			sourceColumn: Column6
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column7
+			dataType: string
+			lineageTag: aec09828-f7d9-4dd1-b5be-da544d8586e8
+			summarizeBy: none
+			sourceColumn: Column7
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column8
+			dataType: string
+			lineageTag: 694991dc-1cdc-4f1a-bd09-b0e0ce119ba9
+			summarizeBy: none
+			sourceColumn: Column8
+
+			annotation SummarizationSetBy = Automatic
+
+		partition Interior = m
+			mode: import
+			source =
+					let
+					    Fonte = Excel.Workbook(File.Contents("C:\Users\user\Documents\RELACAO_PCD_VISITA_FINAL_E-MAIL  - HM (1).xlsx"), null, true),
+					    #"Interior _Sheet" = Fonte{[Item="Interior ",Kind="Sheet"]}[Data],
+					    #"Tipo Alterado" = Table.TransformColumnTypes(#"Interior _Sheet",{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}, {"Column4", type text}, {"Column5", type text}, {"Column6", type text}, {"Column7", type text}, {"Column8", type text}})
+					in
+					    #"Tipo Alterado"
+
+		annotation PBI_NavigationStepName = Navegação
+
+		annotation PBI_ResultType = Exception
+
