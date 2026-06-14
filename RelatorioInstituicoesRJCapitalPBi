@@ -1,0 +1,81 @@
+createOrReplace
+
+	table 'Rio de Janeiro'
+		lineageTag: 5d13e62c-cef9-4b47-9fb2-299206867d95
+
+		column 'RELAÇÃO DE TRABALHO NAS INSTITUIÇÕES 2023'
+			dataType: string
+			lineageTag: 4b166dae-7ef7-4057-b80d-0f0b08474483
+			summarizeBy: none
+			sourceColumn: RELAÇÃO DE TRABALHO NAS INSTITUIÇÕES 2023
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column2
+			dataType: string
+			lineageTag: 33bf1bac-27be-4795-a280-2923e4d37ef6
+			summarizeBy: none
+			sourceColumn: Column2
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column3
+			dataType: string
+			lineageTag: 596d0082-76f6-43c5-bce0-425420e9475f
+			summarizeBy: none
+			sourceColumn: Column3
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column4
+			dataType: string
+			lineageTag: 595cbc6c-20bd-4ec1-b813-2a419517126e
+			summarizeBy: none
+			sourceColumn: Column4
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column5
+			dataType: string
+			lineageTag: adec7879-a14b-490a-9884-a4ffd6b23a54
+			summarizeBy: none
+			sourceColumn: Column5
+
+			annotation SummarizationSetBy = Automatic
+
+		column Column6
+			dataType: string
+			lineageTag: 31368780-1847-4ee6-89cc-09555363469a
+			summarizeBy: none
+			sourceColumn: Column6
+
+			annotation SummarizationSetBy = Automatic
+
+		hierarchy 'Column2 Hierarquia'
+			lineageTag: 99904e1d-cccc-4bca-a56d-ebc83913035f
+
+			level Column2
+				lineageTag: 7b80430e-f17e-4a4c-a3b9-86e6ee3f126a
+				column: Column2
+
+		hierarchy 'Column2 Hierarquia 2'
+			lineageTag: aa995b5b-ead6-41e1-9750-d393af69a7eb
+
+			level Column2
+				lineageTag: a51f5c6e-701f-4884-a0bb-cfa1c475b488
+				column: Column2
+
+		partition 'Rio de Janeiro' = m
+			mode: import
+			source =
+					let
+					    Fonte = Excel.Workbook(File.Contents("C:\Users\user\Documents\RELACAO_PCD_VISITA_FINAL_E-MAIL  - HM (1).xlsx"), null, true),
+					    #"Rio de Janeiro _Sheet" = Fonte{[Item="Rio de Janeiro ",Kind="Sheet"]}[Data],
+					    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Rio de Janeiro _Sheet", [PromoteAllScalars=true]),
+					    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"RELAÇÃO DE TRABALHO NAS INSTITUIÇÕES 2023", type text}, {"Column2", type text}, {"Column3", type text}, {"Column4", type text}, {"Column5", type text}, {"Column6", type any}})
+					in
+					    #"Tipo Alterado"
+
+		annotation PBI_ResultType = Table
+
+
